@@ -44,10 +44,20 @@ if __name__ == "__main__":
     input_data.append("$")
     print(input_data)
     stack = [0] # stack 선언
-
+    
     while(len(input_data) != 1):
+
         x = input_data.popleft()
+        command = table[stack[-1]][x]
+        print(command)
+        print(stack)
+        print()
         # 1) shift 연산인 경우
+        if command[0] == "s":
+            stack.append(x)
+            stack.append(int(command[1:]))
         # 2) reduce 연산인 경우
-        table[stack[-1]][x]
-        
+        elif command[0] == "r":
+            print("reduce")
+        else:
+            print("goto")
