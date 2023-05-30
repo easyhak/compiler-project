@@ -14,9 +14,25 @@ def table_to_dic(filename):
                 continue
             temp_row_dict = dict()
             for key, value in zip(attrs, row):
-                temp_row_dict[key] = value
+                temp_row_dict[key.strip()] = value.strip()
             table.append(temp_row_dict)
     return table
+def cfg_data(filename):
+    data = []
+    with open(filename, mode='r', encoding='UTF8') as file:
+        while True:
+            line = file.readline() 
+            
+            if not line:
+                break
+            temp = line.strip().split('->')
+            production= temp[1].strip().split()
+            data.append([temp[0].strip()])
+            data[-1].append(production)
+    # data = [['CODE ', ['VDECL', 'CODE']], ['CODE ', ['FDECL', 'CODE']], ['CODE ', ['CDECL', 'CODE']], ...]
+    print(data)
+    return data
+
 
 # 메인
 if __name__ == "__main__":
@@ -30,34 +46,55 @@ if __name__ == "__main__":
     else:
         input_file = argument[0]
     
-    action_table = table_to_dic('action.csv')
-    print(action_table[0]['vtype'])
-    goto_table = table_to_dic('goto.csv')
-    print(goto_table[0]['VDECL'])
+    # action_table = table_to_dic('action.csv')
+    # print(action_table[0]['vtype'])
+    # goto_table = table_to_dic('goto.csv')
+    # print(goto_table[0]['VDECL'])
     table = table_to_dic('table.csv')
 
+    # cfg data
+    cfg = cfg_data("cfg.txt")
+    # 파일 열기
     with open(input_file,"r", encoding="UTF8") as f:
         data = f.read()
-        print(data)
+        
+    print(table[1]['vtype'])
+    # input_data 생성
     input_data = deque(data.split()) # popleft하기 위해서 deque으로 변환
-
     input_data.append("$")
-    print(input_data)
     stack = [0] # stack 선언
     
     while(len(input_data) != 1):
-
+        print(*input_data)
+        
         x = input_data.popleft()
+        
+        
         command = table[stack[-1]][x]
-        print(command)
-        print(stack)
-        print()
+        print(f"command: {command}")
+
         # 1) shift 연산인 경우
         if command[0] == "s":
             stack.append(x)
             stack.append(int(command[1:]))
+
+            print(f"shift: {stack}")
+            print()
         # 2) reduce 연산인 경우
         elif command[0] == "r":
-            print("reduce")
-        else:
-            print("goto")
+            input_data.appendleft(x) # 값을 다시 넣어줌
+
+            l = (0 if cfg[int(command[1:])][1]==["''"] else len(cfg[int(command[1:])][1])) # 빈 문자열이면 0으로 해준다. 아니면 길이만큼
+             # 길이의 두배만큼 pop 해줘야함
+            for i in range(l*2):
+                stack.pop()
+            stack.append(cfg[int(command[1:])][0]) # reduce한거 append
+            print(f"reduce: {stack}")
+            print()
+            # goto 연산 실행
+            print(*input_data)
+            print(f"command: {table[stack[-2]][stack[-1]]}")
+            stack.append(int(table[stack[-2]][stack[-1]]))
+            print(f"goto: {stack}")
+            print()
+        
