@@ -55,7 +55,7 @@ if __name__ == "__main__":
     with open(input_file,"r", encoding="UTF8") as f:
         data = f.read()
         
-    print(table[1]['vtype'])
+    # print(table[1]['vtype'])
     # input_data 생성
     input_data = deque(data.split()) # popleft하기 위해서 deque으로 변환
     input_data.append("$")
@@ -103,10 +103,11 @@ if __name__ == "__main__":
                 print(f"goto: {stack}")
                 print()
     except:
-        print("reject")
-    print(stack)
+        print("reject") # 거절
+    # print(stack)
     # accept 일 때만 실행
     # stack에 있는거 채워넣기
+    reducing = []
     if command:
         temp = [] # 임시 리스트
         for i in stack:
@@ -114,7 +115,7 @@ if __name__ == "__main__":
                 temp.append(i)
         reduce.append(["CODE"])
         reduce[-1].append(temp)
-        print(reduce)
+        # print(reduce)
         # reduce = [['RHS', ['literal']], ['ASSIGN', ['id', 'assign', 'RHS']], ['VDECL', ['vtype', 'ASSIGN', 'semi']], ['ODECL', ["''"]], ...]]] 
         l = len(reduce)
         ans = ["CODE"] # 기본
@@ -124,16 +125,20 @@ if __name__ == "__main__":
             x = reduce.pop()
             for j in range(len(ans)):
                 if ans[j] == x[0]:
+                    reducing.append([x[0]])
                     ans.pop(j)
+                    reducing[-1].append('-> '+' '.join(x[1]))
                     for k in range(len(x[1])):
                         ans.insert(j+k,x[1][k])
             tree.append(ans[:])
             # print(*ans)
         # print(tree)  
-
+        reduced = []
         l = len(ans)
+        for i in range(len(reducing)):
+            reduced.append(" ".join(reducing[i]))
+        # 출력     
         for i in range(len(tree)):
             for j in range((l-i)*2,-2,-2):
-                print(" ", end=" ")
-            print(*tree[i])
-    
+                print(" ", end=" "); 
+            print(*tree[i], end=" | "); print(" " if i == 0 else reduced[i-1])
