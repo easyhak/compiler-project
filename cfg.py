@@ -116,4 +116,18 @@ if __name__ == "__main__":
     reduce[-1].append(temp)
     print(reduce)
     # reduce = [['RHS', ['literal']], ['ASSIGN', ['id', 'assign', 'RHS']], ['VDECL', ['vtype', 'ASSIGN', 'semi']], ['ODECL', ["''"]], ...]]] 
+    l = len(reduce)
+    ans = ["CODE"]
+    print(*ans)
+    for i in range(l):
+        x = reduce.pop()
+        for j in range(len(ans)):
+            if ans[j] == x[0]:
+                ans.pop(j)
+                for k in range(len(x[1])):
+                    ans.insert(j+k,x[1][k])
+                
+        print(*ans)
+
+
     
