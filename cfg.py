@@ -31,7 +31,7 @@ def cfg_data(filename):
             data.append([temp[0].strip()])
             data[-1].append(production)
     # data = [['CODE ', ['VDECL', 'CODE']], ['CODE ', ['FDECL', 'CODE']], ['CODE ', ['CDECL', 'CODE']], ...]
-    print(data)
+    # print(data)
     return data
 
 
@@ -47,10 +47,6 @@ if __name__ == "__main__":
     else:
         input_file = argument[0]
     
-    # action_table = table_to_dic('action.csv')
-    # print(action_table[0]['vtype'])
-    # goto_table = table_to_dic('goto.csv')
-    # print(goto_table[0]['VDECL'])
     table = table_to_dic('table.csv')
 
     # cfg data
@@ -63,6 +59,7 @@ if __name__ == "__main__":
     # input_data 생성
     input_data = deque(data.split()) # popleft하기 위해서 deque으로 변환
     input_data.append("$")
+    accept = False
     stack = [0] # stack 선언
     reduce = [] # reduce한 연산 넣어주기
     try:
@@ -73,7 +70,9 @@ if __name__ == "__main__":
             
             command = table[stack[-1]][x]
             print(f"command: {command}")
-            
+            if command == "acc":
+                accept = True
+
             # 1) shift 연산인 경우
             if command[0] == "s":
                 stack.append(x)
@@ -106,28 +105,35 @@ if __name__ == "__main__":
     except:
         print("reject")
     print(stack)
-    
+    # accept 일 때만 실행
     # stack에 있는거 채워넣기
-    temp = []
-    for i in stack:
-        if not isinstance(i, int):
-            temp.append(i)
-    reduce.append(["CODE"])
-    reduce[-1].append(temp)
-    print(reduce)
-    # reduce = [['RHS', ['literal']], ['ASSIGN', ['id', 'assign', 'RHS']], ['VDECL', ['vtype', 'ASSIGN', 'semi']], ['ODECL', ["''"]], ...]]] 
-    l = len(reduce)
-    ans = ["CODE"]
-    print(*ans)
-    for i in range(l):
-        x = reduce.pop()
-        for j in range(len(ans)):
-            if ans[j] == x[0]:
-                ans.pop(j)
-                for k in range(len(x[1])):
-                    ans.insert(j+k,x[1][k])
-                
-        print(*ans)
+    if command:
+        temp = [] # 임시 리스트
+        for i in stack:
+            if not isinstance(i, int): # int 확인
+                temp.append(i)
+        reduce.append(["CODE"])
+        reduce[-1].append(temp)
+        print(reduce)
+        # reduce = [['RHS', ['literal']], ['ASSIGN', ['id', 'assign', 'RHS']], ['VDECL', ['vtype', 'ASSIGN', 'semi']], ['ODECL', ["''"]], ...]]] 
+        l = len(reduce)
+        ans = ["CODE"] # 기본
+        tree = [["CODE"]] # tree를 저장해주는 변수 이걸로 예쁘게 포매팅 해보자
+        # print(*ans)
+        for i in range(l):
+            x = reduce.pop()
+            for j in range(len(ans)):
+                if ans[j] == x[0]:
+                    ans.pop(j)
+                    for k in range(len(x[1])):
+                        ans.insert(j+k,x[1][k])
+            tree.append(ans[:])
+            # print(*ans)
+        # print(tree)  
 
-
+        l = len(ans)
+        for i in range(len(tree)):
+            for j in range((l-i)*2,-2,-2):
+                print(" ", end=" ")
+            print(*tree[i])
     
