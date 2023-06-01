@@ -9,12 +9,12 @@ RHS -> EXPR
 RHS -> literal
 RHS -> character
 RHS -> boolstr
-EXPR -> EXPR_
-EXPR -> EXPR_ addsub EXPR
-EXPR -> EXPR_ multdiv EXPR
-EXPR_ -> lparen EXPR rparen 
-EXPR_ -> id 
-EXPR_ -> num
+EXPR -> EXPR'
+EXPR -> EXPR' addsub EXPR
+EXPR -> EXPR' multdiv EXPR
+EXPR' -> lparen EXPR rparen 
+EXPR' -> id 
+EXPR' -> num
 FDECL -> vtype id lparen ARG rparen lbrace BLOCK RETURN rbrace
 ARG -> vtype id MOREARGS 
 ARG -> ''
