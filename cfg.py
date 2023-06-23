@@ -1,8 +1,8 @@
 import csv
 import sys
-from collections import deque, defaultdict
+from collections import deque
 
-# csv table을 dictionary로 바꿔주는 func
+# csv table을 dictionary형태로 바꿔주는 func
 def table_to_dic(filename):
     with open(filename, mode='r', encoding='UTF8') as file:
         reader = csv.reader(file)
@@ -18,6 +18,7 @@ def table_to_dic(filename):
             table.append(temp_row_dict)
     return table
 
+# cfg의 데이터를 split하는 func
 def cfg_data(filename):
     data = []
     with open(filename, mode='r', encoding='UTF8') as file:
@@ -31,11 +32,10 @@ def cfg_data(filename):
             data.append([temp[0].strip()])
             data[-1].append(production)
     # data = [['CODE ', ['VDECL', 'CODE']], ['CODE ', ['FDECL', 'CODE']], ['CODE ', ['CDECL', 'CODE']], ...]
-    # print(data)
     return data
 
 
-# 메인
+# main
 if __name__ == "__main__":
 
     # argv 설정
@@ -58,7 +58,8 @@ if __name__ == "__main__":
     # print(table[1]['vtype'])
     # input_data 생성
     input_data = deque(data.split()) # popleft하기 위해서 deque으로 변환
-    input_data.append("$")
+    input_data.append("$") # 초기 데이터 설정
+
     accept = False
     stack = [0] # stack 선언
     reduce = [] # reduce한 연산 넣어주기
@@ -106,10 +107,11 @@ if __name__ == "__main__":
         print("reject") # 거절
     # print(stack)
     # accept 일 때만 실행
-    # stack에 있는거 채워넣기
+    
     reducing = []
     if command:
         temp = [] # 임시 리스트
+        # stack에 있는거 채워넣기
         for i in stack:
             if not isinstance(i, int): # int 확인
                 temp.append(i)
@@ -119,7 +121,7 @@ if __name__ == "__main__":
         # reduce = [['RHS', ['literal']], ['ASSIGN', ['id', 'assign', 'RHS']], ['VDECL', ['vtype', 'ASSIGN', 'semi']], ['ODECL', ["''"]], ...]]] 
         l = len(reduce)
         ans = ["CODE"] # 기본
-        tree = [["CODE"]] # tree를 저장해주는 변수 이걸로 예쁘게 포매팅 해보자
+        tree = [["CODE"]] # tree를 저장해주는 변수
         # print(*ans)
         for i in range(l):
             x = reduce.pop()
